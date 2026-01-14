@@ -7,4 +7,4 @@ if [ "$1" = "--bear" ]; then
     echo "Generated compile_commands.json"
 fi
 
-gcc main.c gx.c core/array.c core/platform.c external/glad.c -lglfw -lm -I. -Iexternal -o gx && ./gx
+gcc main.c renderer/context.c renderer/shader.c core/array.c core/platform.c core/file.c external/glad.c -lglfw -lm -I. -Iexternal -o gx && ./gx

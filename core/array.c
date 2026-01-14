@@ -1,11 +1,10 @@
 #include "utils.h"
 
-#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
-array gx_array_create(size_t element_size) {
-        array array;
+Array array_create(size_t element_size) {
+        Array array;
         array.element_size = element_size;
         array.count        = 0;
         array.data         = malloc(array.element_size * GX_ARRAY_BASE_COUNT);
@@ -13,29 +12,29 @@ array gx_array_create(size_t element_size) {
         return array;
 }
 
-void gx_array_resize(array* array, size_t capacity) {
+void array_resize(Array* array, size_t capacity) {
         void* new_ptr   = malloc(capacity * array->element_size);
         array->capacity = capacity;
-        array->count    = fmin(array->count, capacity);
+        array->count    = array->count <= capacity ? array->count : capacity;
         memcpy(new_ptr, array->data, array->count * array->element_size);
         free(array->data);
         array->data = new_ptr;
 }
 
-void gx_array_appand(array* array, void* data) {
+void array_append(Array* array, void* data) {
         if (array->count >= array->capacity) {
-                gx_array_resize(array,
-                                array->capacity * GX_ARRAY_RESIZE_FACTOR);
+                array_resize(array, array->capacity * GX_ARRAY_RESIZE_FACTOR);
         }
-        void* dest = gx_array_at(array, array->count);
+        void* dest = array_at(array, array->count);
         memcpy(dest, data, array->element_size);
         array->count++;
 }
 
-void* gx_array_at(array* array, size_t index) {
+void* array_at(Array* array, size_t index) {
         return array->data + index * array->element_size;
 }
 
-void gx_array_delete(array* array) {
+void array_delete(Array* array) {
         free(array->data);
+        array->data = NULL;
 }

@@ -13,5 +13,7 @@
 int main() {
         gx_ctx* gx_context = gx_ctx_init(800, 600);
 
+        gx_create_shader(gx_context, "shaders/vs.glsl", "shaders/fs.glsl");
+
         gx_ctx_drop(gx_context);
 }

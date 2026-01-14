@@ -15,12 +15,18 @@ struct Camera {
 };
 
 struct GlobalRes {
-        Array VAOs;
+        Array buffer_layouts;
         Array shader_programs;
         Array mesh_objs;
 };
 
+struct LayoutTemplate {
+        u32 gx_id;
+};
+
 struct MeshObj {
+        u32 gx_id;
+
         f32 transform[16];
         u32 VAO;
         u32 VBO;

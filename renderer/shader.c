@@ -43,9 +43,9 @@ uint32_t compile_shader_from_path(const char* path, GLuint type) {
         return 0;
 }
 
-shader_program gx_create_shader(gx_ctx*     ctx,
-                                const char* vertex_shader_path,
-                                const char* fragment_shader_path) {
+gx_shader gx_shader_create(gx_ctx*     ctx,
+                           const char* vertex_shader_path,
+                           const char* fragment_shader_path) {
         GLuint vs =
                 compile_shader_from_path(vertex_shader_path, GL_VERTEX_SHADER);
         GLuint fs      = compile_shader_from_path(fragment_shader_path,
@@ -70,7 +70,7 @@ shader_program gx_create_shader(gx_ctx*     ctx,
                 glDeleteProgram(prog_id);
                 glDeleteShader(vs);
                 glDeleteShader(fs);
-                shader_program null_program = { 0 };
+                u32 null_program = { 0 };
                 return null_program;
         }
 
@@ -78,7 +78,6 @@ shader_program gx_create_shader(gx_ctx*     ctx,
         glDeleteShader(fs);
         array_append(&ctx->glob_resources.shader_programs, &prog_id);
 
-        shader_program program;
-        program.id = prog_id;
+        u32 program = prog_id;
         return program;
 }

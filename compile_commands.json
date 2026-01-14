@@ -1,0 +1,46 @@
+[
+  {
+    "file": "main.c",
+    "arguments": [
+      "gcc",
+      "-c",
+      "main.c",
+      "-I.",
+      "-Iexternal"
+    ],
+    "directory": "/home/cian/dev/C/gx"
+  },
+  {
+    "file": "core/gx.c",
+    "arguments": [
+      "gcc",
+      "-c",
+      "core/gx.c",
+      "-I.",
+      "-Iexternal"
+    ],
+    "directory": "/home/cian/dev/C/gx"
+  },
+  {
+    "file": "core/utils.c",
+    "arguments": [
+      "gcc",
+      "-c",
+      "core/utils.c",
+      "-I.",
+      "-Iexternal"
+    ],
+    "directory": "/home/cian/dev/C/gx"
+  },
+  {
+    "file": "external/glad.c",
+    "arguments": [
+      "gcc",
+      "-c",
+      "external/glad.c",
+      "-I.",
+      "-Iexternal"
+    ],
+    "directory": "/home/cian/dev/C/gx"
+  }
+]

@@ -64,8 +64,8 @@ gx_shader gx_shader_create(gx_ctx*     ctx,
                 char* log = malloc(len ? len : 1);
                 glGetProgramInfoLog(prog_id, len, NULL, log);
                 printf("Failed to link \"%s", vertex_shader_path);
-                printf("\" with \"%s", fragment_shader_path);
-                printf("\" --- %s\n", log);
+                printf("\", \"%s", fragment_shader_path);
+                printf("\":\n    %s\n", log);
                 free(log);
                 glDeleteProgram(prog_id);
                 glDeleteShader(vs);

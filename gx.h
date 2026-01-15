@@ -1,8 +1,5 @@
 #ifndef GX_H
 #define GX_H
-
-// plattform
-
 #include <stddef.h>
 typedef struct gx_ctx gx_ctx;
 typedef unsigned int  gx_layout;
@@ -16,11 +13,21 @@ gx_shader gx_shader_create(gx_ctx*     ctx,
                            const char* vertex_shader_path,
                            const char* fragment_shader_path);
 
-struct gx_layout_desc {};
+enum gx_layout_attrib_type { GX_TYPE_FLOAT, GX_TYPE_INT, GX_TYPE_UNSIGNED_INT };
 
-gx_layout gx_layout_create(gx_ctx* ctx, struct gx_layout_desc layout_desc);
+typedef struct {
+        enum gx_layout_attrib_type type;
+        int                        count;
+        int                        normalized;
+        unsigned int               offset;
+} gx_layout_attrib;
 
-struct gx_mesh_desc {
+gx_layout gx_layout_create(gx_ctx*           ctx,
+                           gx_layout_attrib* layout_desc,
+                           unsigned int      attribute_count,
+                           size_t            stride);
+
+typedef struct {
         gx_layout layout;
         gx_shader shader;
 
@@ -29,9 +36,9 @@ struct gx_mesh_desc {
         void*  index_data;
         size_t index_data_size;
         size_t index_count;
-};
+} gx_mesh_desc;
 
-gx_mesh gx_mesh_add(gx_ctx* ctx, struct gx_mesh_desc mesh_desc);
+gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc);
 void    gx_mesh_delete(gx_ctx* ctx, gx_mesh mesh);
 
 void gx_render(gx_ctx* ctx);

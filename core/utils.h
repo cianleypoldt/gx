@@ -25,6 +25,7 @@ void  array_resize(Array* array, size_t capacity);
 void  array_append(Array* array, void* data);
 void* array_at(Array* array, size_t index);
 void  array_delete(Array* array);
+void  array_remove_at(Array* array, size_t index);
 
 // platform.c
 int   init_glfw();

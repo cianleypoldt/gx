@@ -1,6 +1,7 @@
 #ifndef RENDER_TYPES_H
 #define RENDER_TYPES_H
 #include "core/utils.h"
+#include "gx.h"
 
 #include <stddef.h>
 
@@ -15,13 +16,15 @@ struct Camera {
 };
 
 struct GlobalRes {
-        Array buffer_layouts;
+        Array layouts;
         Array shader_programs;
         Array mesh_objs;
 };
 
 struct LayoutTemplate {
-        u32 gx_id;
+        gx_layout_attrib* attributes;
+        int               attrib_count;
+        size_t            stride;
 };
 
 struct MeshObj {
@@ -45,6 +48,8 @@ struct gx_ctx {
 
         struct Camera    camera;
         struct GlobalRes glob_resources;
+
+        u32 gx_id_tracker;
 };
 
 #endif

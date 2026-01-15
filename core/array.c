@@ -38,3 +38,14 @@ void array_delete(Array* array) {
         free(array->data);
         array->data = NULL;
 }
+
+void array_remove_at(Array* array, size_t index) {
+        void* current = array_at(array, index);
+        void* next    = array_at(array, index + 1);
+        for (int i = index; i < array->count - 1; i++) {
+                memcpy(current, next, array->element_size);
+                current = next;
+                next += array->element_size;
+        }
+        array->count--;
+}

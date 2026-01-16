@@ -12,22 +12,28 @@
 
 unsigned int indices[]  = { 0, 1, 2 };
 float        vertices[] = {
-        -0.5f,
-        -0.5f,
+        -5.0f,
+        -5.0f,
         0.0f,
         /*... */  // 1.0f, 0.0f, 0.0f, /*... */
-        0.5f,
-        -0.5f,
+        5.0f,
+        -5.0f,
         0.0f,
         /*... */  // 0.0f, 1.0f, 0.0f, /*... */
         0.0f,
-        0.5f,
+        5.0f,
         0.0f,
         /*... */  // 0.0f, 0.0f, 1.0f /*... */ };
 };
 
 int main() {
         gx_ctx* gx_context = gx_ctx_init(800, 600);
+
+        float camera_position[3] = { 0, 10, 0 };
+        gx_camera_set_position(gx_context, camera_position);
+
+        float camera_rotation[4] = { 0, 0, 0, 1 };
+        gx_camera_set_rotation(gx_context, camera_rotation);
 
         gx_layout_attrib pos_color_attrs[] = {
                 { .type = GX_TYPE_FLOAT, 3, 0, 0 },
@@ -50,6 +56,12 @@ int main() {
 
         //gx_mesh mesh1 = gx_mesh_create(gx_context, mesh_desc);
         gx_mesh mesh2 = gx_mesh_create(gx_context, mesh_desc);
+
+        gx_mesh_render(gx_context, mesh2, basic_shader);
+
+        while (!gx_should_close(gx_context)) {
+                gx_present(gx_context);
+        }
 
         gx_ctx_drop(gx_context);
 }

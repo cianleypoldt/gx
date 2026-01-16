@@ -30,7 +30,7 @@ void array_append(Array* array, const void* data) {
         array->count++;
 }
 
-void* array_at(Array* array, size_t index) {
+void* array_at(const Array* array, size_t index) {
         return (unsigned char*) array->data + index * array->element_size;
 }
 

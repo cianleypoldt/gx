@@ -2,6 +2,27 @@
 #include "glad/glad.h"
 #include "gx.h"
 #include "renderer/objects.h"
+#include "renderer/renderer.h"
+
+void init_mesh_data_ubo(gx_ctx* ctx) {
+        glGenBuffers(1, &ctx->mesh_data_ubo);
+        glBindBuffer(GL_UNIFORM_BUFFER, ctx->mesh_data_ubo);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(struct mesh_ubo_data), NULL,
+                     GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, ctx->mesh_data_ubo);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void destroy_mesh_data_ubo(gx_ctx* ctx) {
+        glDeleteBuffers(1, &ctx->mesh_data_ubo);
+}
+
+void sync_mesh_ubo_data(gx_ctx* ctx, struct mesh_ubo_data* ubo_data) {
+        glBindBuffer(GL_UNIFORM_BUFFER, ctx->mesh_data_ubo);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(struct mesh_ubo_data),
+                        &ubo_data);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
 
 gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
         struct MeshObj mesh = { 0 };
@@ -75,4 +96,65 @@ void gx_mesh_delete(gx_ctx* ctx, gx_mesh mesh) {
 
                 array_remove_at(&ctx->glob_resources.mesh_objs, i);
         }
+}
+
+void gx_mesh_render(gx_ctx* ctx, gx_mesh mesh, gx_shader shader) {
+        struct MeshObj* m = NULL;
+        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+                struct MeshObj* temp =
+                        array_at(&ctx->glob_resources.mesh_objs, i);
+                if (temp->gx_id == mesh) {
+                        m = temp;
+                        break;
+                }
+        }
+        if (!m) {
+                return;
+        }
+        compute_transform(m->ubo_data.transform, m->position, m->quat_rotation);
+        sync_mesh_ubo_data(ctx, &m->ubo_data);
+
+        glUseProgram(*(unsigned int*) array_at(
+                &ctx->glob_resources.shader_programs, shader));
+        glBindVertexArray(m->VAO);
+
+        glDrawElements(GL_TRIANGLES, m->index_count, GL_UNSIGNED_INT,
+                       (const void*) 0);
+}
+
+void gx_mesh_set_position(gx_ctx* ctx, gx_mesh mesh, float position[3]) {
+        struct MeshObj* m = NULL;
+        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+                struct MeshObj* temp =
+                        array_at(&ctx->glob_resources.mesh_objs, i);
+                if (temp->gx_id == mesh) {
+                        m = temp;
+                        break;
+                }
+        }
+        if (!m) {
+                return;
+        }
+        m->position[0] = position[0];
+        m->position[1] = position[1];
+        m->position[2] = position[2];
+};
+
+void gx_mesh_set_rotation(gx_ctx* ctx, gx_mesh mesh, float quat_rotation[4]) {
+        struct MeshObj* m = NULL;
+        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+                struct MeshObj* temp =
+                        array_at(&ctx->glob_resources.mesh_objs, i);
+                if (temp->gx_id == mesh) {
+                        m = temp;
+                        break;
+                }
+        }
+        if (!m) {
+                return;
+        }
+        m->quat_rotation[0] = quat_rotation[0];
+        m->quat_rotation[1] = quat_rotation[1];
+        m->quat_rotation[2] = quat_rotation[2];
+        m->quat_rotation[3] = quat_rotation[3];
 }

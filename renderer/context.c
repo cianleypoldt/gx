@@ -28,6 +28,7 @@ gx_ctx* gx_ctx_init(int frame_width, int frame_height) {
         ctx->is_fullscreen = 0;
 
         init_camera(ctx);
+        init_mesh_data_ubo(ctx);
 
         return ctx;
 }
@@ -56,6 +57,8 @@ void gx_ctx_drop(gx_ctx* ctx) {
                                      &ctx->glob_resources.gl_camera_objs, i))
                                     .UBO);
         }
+
+        destroy_mesh_data_ubo(ctx);
 
         GLenum err;
         while ((err = glGetError()) != GL_NO_ERROR) {

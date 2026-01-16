@@ -10,6 +10,10 @@ typedef unsigned int  gx_mesh;
 gx_ctx* gx_ctx_init(int frame_width, int frame_height);
 void    gx_ctx_drop(gx_ctx* ctx);
 
+void gx_clear(gx_ctx* ctx);
+void gx_present(gx_ctx* ctx);
+int  gx_should_close(gx_ctx* ctx);
+
 gx_shader gx_shader_create(gx_ctx*     ctx,
                            const char* vertex_shader_path,
                            const char* fragment_shader_path);
@@ -46,6 +50,11 @@ typedef struct {
 
 gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc);
 void    gx_mesh_delete(gx_ctx* ctx, gx_mesh mesh);
+
+void gx_mesh_set_position(gx_ctx* ctx, gx_mesh mesh, float position[3]);
+void gx_mesh_set_rotation(gx_ctx* ctx, gx_mesh mesh, float quat_rotation[4]);
+
+void gx_mesh_render(gx_ctx* ctx, gx_mesh mesh, gx_shader shader);
 
 void gx_render(gx_ctx* ctx);
 

@@ -40,10 +40,18 @@ struct LayoutTemplate {
         size_t            stride;
 };
 
+struct mesh_ubo_data {
+        f32 transform[16];
+};
+
 struct MeshObj {
         u32 gx_id;
 
-        f32 transform[16];
+        struct mesh_ubo_data ubo_data;
+
+        f32 position[3];
+        f32 quat_rotation[4];
+
         u32 VAO;
         u32 VBO;
         u32 EBO;
@@ -60,6 +68,8 @@ struct gx_ctx {
 
         struct Camera    camera;
         struct GlobalRes glob_resources;
+
+        u32 mesh_data_ubo;
 
         u32 gx_id_tracker;
 };

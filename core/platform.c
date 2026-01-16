@@ -1,5 +1,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "gx.h"
+#include "renderer/objects.h"
 
 #include <stdio.h>
 
@@ -32,6 +34,21 @@ int init_OpenGL(void* window_ptr) {
                 glfwTerminate();
                 return 0;
         }
+        glEnable(GL_DEPTH_TEST);
+        return 1;
+}
+
+void gx_clear(gx_ctx* ctx) {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void gx_present(gx_ctx* ctx) {
+        glfwSwapBuffers(ctx->window_ptr);
+}
+
+int gx_should_close(gx_ctx* ctx) {
+        return glfwWindowShouldClose(ctx->window_ptr);
 }
 
 void destroy_window(void* window_ptr) {

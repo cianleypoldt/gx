@@ -23,7 +23,7 @@ typedef struct {
 Array array_create(size_t element_size);
 void  array_resize(Array* array, size_t capacity);
 void  array_append(Array* array, const void* data);
-void* array_at(Array* array, size_t index);
+void* array_at(const Array* array, size_t index);
 void  array_delete(Array* array);
 void  array_remove_at(Array* array, size_t index);
 

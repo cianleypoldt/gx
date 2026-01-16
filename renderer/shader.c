@@ -48,9 +48,14 @@ gx_shader gx_shader_create(gx_ctx*     ctx,
                            const char* fragment_shader_path) {
         GLuint vs =
                 compile_shader_from_path(vertex_shader_path, GL_VERTEX_SHADER);
-        GLuint fs      = compile_shader_from_path(fragment_shader_path,
+        GLuint fs = compile_shader_from_path(fragment_shader_path,
 
-                                                  GL_FRAGMENT_SHADER);
+                                             GL_FRAGMENT_SHADER);
+
+        if (vs == 0 || fs == 0) {
+                return 0;
+        }
+
         GLuint prog_id = glCreateProgram();
         glAttachShader(prog_id, vs);
         glAttachShader(prog_id, fs);

@@ -10,19 +10,45 @@
 // - dann Schatten
 // - dann Transparenz
 
+unsigned int indices[]  = { 0, 1, 2 };
+float        vertices[] = {
+        -0.5f,
+        -0.5f,
+        0.0f,
+        /*... */  // 1.0f, 0.0f, 0.0f, /*... */
+        0.5f,
+        -0.5f,
+        0.0f,
+        /*... */  // 0.0f, 1.0f, 0.0f, /*... */
+        0.0f,
+        0.5f,
+        0.0f,
+        /*... */  // 0.0f, 0.0f, 1.0f /*... */ };
+};
+
 int main() {
         gx_ctx* gx_context = gx_ctx_init(800, 600);
 
         gx_layout_attrib pos_color_attrs[] = {
-                { GX_TYPE_FLOAT, 3, 0, 0                 },
-                { GX_TYPE_FLOAT, 3, 0, sizeof(float) * 3 }
+                { .type = GX_TYPE_FLOAT, 3, 0, 0 },
         };
 
-        gx_layout l1 = gx_layout_create(gx_context, pos_color_attrs, 2,
-                                        6 * sizeof(float));
+        gx_layout l1 = gx_layout_create(gx_context, pos_color_attrs, 1,
+                                        3 * sizeof(float));
 
         gx_shader basic_shader = gx_shader_create(gx_context, "shaders/vs.glsl",
                                                   "shaders/fs.glsl");
+
+        gx_mesh_desc mesh_desc = { .index_count      = 3,
+                                   .index_data_size  = 3 * sizeof(unsigned int),
+                                   .vertex_data_size = 3 * 6 * sizeof(float),
+                                   .index_data       = indices,
+                                   .vertex_data      = vertices,
+                                   .layout           = l1,
+                                   .shader           = basic_shader };
+
+        //gx_mesh mesh1 = gx_mesh_create(gx_context, mesh_desc);
+        gx_mesh mesh2 = gx_mesh_create(gx_context, mesh_desc);
 
         gx_ctx_drop(gx_context);
 }

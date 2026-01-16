@@ -3,6 +3,8 @@
 #include "gx.h"
 #include "renderer/objects.h"
 
+#include <stdio.h>
+
 gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
         struct MeshObj mesh = { 0 };
 
@@ -49,7 +51,6 @@ gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
                 }
 
                 glEnableVertexArrayAttrib(mesh.VAO, i);
-
                 glVertexArrayAttribFormat(mesh.VAO, i, /* attribute location */
                                           attr->count, gl_type,
                                           attr->normalized, attr->offset);
@@ -70,6 +71,7 @@ void gx_mesh_delete(gx_ctx* ctx, gx_mesh mesh) {
                 if (m->gx_id != mesh) {
                         continue;
                 }
+
                 glDeleteBuffers(1, &m->VBO);
                 glDeleteBuffers(1, &m->EBO);
                 glDeleteVertexArrays(1, &m->VAO);

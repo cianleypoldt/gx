@@ -6,18 +6,26 @@
 #include <stddef.h>
 
 struct Camera {
-        f32 proj[16];
-        f32 view[16];
         f32 position[3];
-        f32 rotation[3];
+        f32 quat_rotation[4];
+
         f32 fov;
+        f32 aspect;
         f32 near_plane;
         f32 far_plane;
+
+        struct {
+                f32 proj[16];
+                f32 view[16];
+        } ubo_data;
+
+        u32 UBO;
 };
 
 struct GlobalRes {
         Array layouts;
         Array shader_programs;
+        Array cameras;
         Array mesh_objs;
 };
 

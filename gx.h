@@ -3,8 +3,9 @@
 #include <stddef.h>
 typedef struct gx_ctx gx_ctx;
 typedef unsigned int  gx_layout;
-typedef unsigned int  gx_mesh;
 typedef unsigned int  gx_shader;
+typedef unsigned int  gx_camera;
+typedef unsigned int  gx_mesh;
 
 gx_ctx* gx_ctx_init(int frame_width, int frame_height);
 void    gx_ctx_drop(gx_ctx* ctx);
@@ -26,6 +27,9 @@ gx_layout gx_layout_create(gx_ctx*           ctx,
                            gx_layout_attrib* layout_desc,
                            unsigned int      attribute_count,
                            size_t            stride);
+
+gx_camera gx_camera_create(gx_ctx* ctx, float fov);
+void      gx_camera_delete(gx_camera camera);
 
 typedef struct {
         gx_layout layout;

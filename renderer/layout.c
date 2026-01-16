@@ -7,6 +7,8 @@ gx_layout gx_layout_create(gx_ctx*           ctx,
                            unsigned int      attribute_count,
                            size_t            stride) {
         void* attrib_ptr = malloc(attribute_count * sizeof(gx_layout_attrib));
+        memcpy(attrib_ptr, layout_desc,
+               attribute_count * sizeof(gx_layout_attrib));
         struct LayoutTemplate layout = { .attributes   = attrib_ptr,
                                          .attrib_count = attribute_count,
                                          .stride       = stride };

@@ -39,13 +39,14 @@ int main() {
         gx_shader basic_shader = gx_shader_create(gx_context, "shaders/vs.glsl",
                                                   "shaders/fs.glsl");
 
-        gx_mesh_desc mesh_desc = { .index_count      = 3,
-                                   .index_data_size  = 3 * sizeof(unsigned int),
-                                   .vertex_data_size = 3 * 6 * sizeof(float),
-                                   .index_data       = indices,
-                                   .vertex_data      = vertices,
-                                   .layout           = l1,
-                                   .shader           = basic_shader };
+        gx_mesh_desc mesh_desc = {
+                .index_count      = 3,
+                .index_data_size  = 3 * sizeof(unsigned int),
+                .vertex_data_size = 3 * 6 * sizeof(float),
+                .index_data       = indices,
+                .vertex_data      = vertices,
+                .layout           = l1,
+        };
 
         //gx_mesh mesh1 = gx_mesh_create(gx_context, mesh_desc);
         gx_mesh mesh2 = gx_mesh_create(gx_context, mesh_desc);

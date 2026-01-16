@@ -29,11 +29,13 @@ gx_layout gx_layout_create(gx_ctx*           ctx,
                            size_t            stride);
 
 gx_camera gx_camera_create(gx_ctx* ctx, float fov);
-void      gx_camera_delete(gx_camera camera);
+void      gx_camera_delete(gx_ctx* ctx, gx_camera camera);
+
+void gx_camera_set_position(gx_ctx* ctx, float position[3]);
+void gx_camera_set_rotation(gx_ctx* ctx, float quat_rotation[3]);
 
 typedef struct {
         gx_layout layout;
-        gx_shader shader;
 
         void*  vertex_data;
         size_t vertex_data_size;

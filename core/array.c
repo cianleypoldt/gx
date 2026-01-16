@@ -4,34 +4,34 @@
 #include <string.h>
 
 Array array_create(size_t element_size) {
-        Array array;
-        array.element_size = element_size;
-        array.count        = 0;
-        array.data         = malloc(array.element_size * GX_ARRAY_BASE_COUNT);
-        array.capacity     = GX_ARRAY_BASE_COUNT;
+        Array array = { .element_size = element_size,
+                        .count        = 0,
+                        .capacity     = GX_ARRAY_BASE_COUNT,
+                        .data = malloc(element_size * GX_ARRAY_BASE_COUNT) };
         return array;
 }
 
 void array_resize(Array* array, size_t capacity) {
-        void* new_ptr   = malloc(capacity * array->element_size);
-        array->capacity = capacity;
-        array->count    = array->count <= capacity ? array->count : capacity;
+        void* new_ptr = malloc(capacity * array->element_size);
+        if (array->count > capacity) {
+                array->count = capacity;
+        }
         memcpy(new_ptr, array->data, array->count * array->element_size);
         free(array->data);
-        array->data = new_ptr;
+        array->data     = new_ptr;
+        array->capacity = capacity;
 }
 
-void array_append(Array* array, void* data) {
+void array_append(Array* array, const void* data) {
         if (array->count >= array->capacity) {
                 array_resize(array, array->capacity * GX_ARRAY_RESIZE_FACTOR);
         }
-        void* dest = array_at(array, array->count);
-        memcpy(dest, data, array->element_size);
+        memcpy(array_at(array, array->count), data, array->element_size);
         array->count++;
 }
 
 void* array_at(Array* array, size_t index) {
-        return array->data + index * array->element_size;
+        return (unsigned char*) array->data + index * array->element_size;
 }
 
 void array_delete(Array* array) {
@@ -40,12 +40,19 @@ void array_delete(Array* array) {
 }
 
 void array_remove_at(Array* array, size_t index) {
-        void* current = array_at(array, index);
-        void* next    = array_at(array, index + 1);
-        for (int i = index; i < array->count - 1; i++) {
-                memcpy(current, next, array->element_size);
-                current = next;
-                next += array->element_size;
+        if (index >= array->count) {  // against overflow of size_t bytes
+                return;
+        }
+        void*  src   = array_at(array, index + 1);
+        void*  dst   = array_at(array, index);
+        size_t bytes = (array->count - index - 1) * array->element_size;
+        if (bytes > 0) {
+                memmove(dst, src, bytes);
         }
         array->count--;
+        if (array->count < array->capacity / (GX_ARRAY_RESIZE_FACTOR *
+                                              GX_ARRAY_RESIZE_FACTOR) &&
+            array->capacity > GX_ARRAY_BASE_COUNT) {
+                array_resize(array, array->capacity / GX_ARRAY_RESIZE_FACTOR);
+        }
 }

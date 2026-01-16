@@ -3,13 +3,10 @@
 #include "gx.h"
 #include "renderer/objects.h"
 
-#include <stdio.h>
-
 gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
         struct MeshObj mesh = { 0 };
 
-        mesh.shader_program = mesh_desc.shader;
-        mesh.index_count    = mesh_desc.index_count;
+        mesh.index_count = mesh_desc.index_count;
 
         struct LayoutTemplate* layout =
                 array_at(&ctx->glob_resources.layouts, mesh_desc.layout);

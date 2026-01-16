@@ -1,9 +1,19 @@
-#ifndef RENDER_TYPES_H
-#define RENDER_TYPES_H
+#ifndef RENDER_OBJECTS_H
+#define RENDER_OBJECTS_H
 #include "core/utils.h"
 #include "gx.h"
 
 #include <stddef.h>
+
+struct GLCameraObject {
+        u32 gx_id;
+        u32 UBO;
+
+        struct {
+                f32 proj[16];
+                f32 view[16];
+        } ubo_data;
+};
 
 struct Camera {
         f32 position[3];
@@ -14,18 +24,13 @@ struct Camera {
         f32 near_plane;
         f32 far_plane;
 
-        struct {
-                f32 proj[16];
-                f32 view[16];
-        } ubo_data;
-
-        u32 UBO;
+        u32 gl_camera_object_id;
 };
 
 struct GlobalRes {
         Array layouts;
         Array shader_programs;
-        Array cameras;
+        Array gl_camera_objs;
         Array mesh_objs;
 };
 
@@ -42,7 +47,6 @@ struct MeshObj {
         u32 VAO;
         u32 VBO;
         u32 EBO;
-        u32 shader_program;
         u32 vertex_count;
         u32 index_count;
 };

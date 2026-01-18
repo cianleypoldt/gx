@@ -81,8 +81,8 @@ gx_shader gx_shader_create(gx_ctx*     ctx,
 
         glDeleteShader(vs);
         glDeleteShader(fs);
-        array_append(&ctx->glob_resources.shader_programs, &prog_id);
 
-        u32 program = prog_id;
-        return program;
+        u32 index = ctx->glob_resources.shader_programs.count;
+        array_append(&ctx->glob_resources.shader_programs, &prog_id);
+        return index;
 }

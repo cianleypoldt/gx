@@ -10,7 +10,7 @@ typedef unsigned int  gx_mesh;
 gx_ctx* gx_ctx_init(int frame_width, int frame_height);
 void    gx_ctx_drop(gx_ctx* ctx);
 
-void gx_clear(gx_ctx* ctx);
+void gx_clear();
 void gx_present(gx_ctx* ctx);
 int  gx_should_close(gx_ctx* ctx);
 
@@ -35,8 +35,8 @@ gx_layout gx_layout_create(gx_ctx*           ctx,
 gx_camera gx_camera_create(gx_ctx* ctx, float fov);
 void      gx_camera_delete(gx_ctx* ctx, gx_camera camera);
 
-void gx_camera_set_position(gx_ctx* ctx, float position[3]);
-void gx_camera_set_rotation(gx_ctx* ctx, float quat_rotation[3]);
+void gx_camera_set_position(gx_ctx* ctx, float* position);
+void gx_camera_set_rotation(gx_ctx* ctx, float* quat_rotation);
 
 typedef struct {
         gx_layout layout;

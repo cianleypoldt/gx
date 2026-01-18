@@ -15,9 +15,10 @@ int init_glfw() {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        return 0;
 }
 
-void* create_window(int height, int width, const char* title) {
+void* create_window(int width, int height, const char* title) {
         GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL) {
                 fprintf(stderr, "Failed to create GLFW window\n");
@@ -38,7 +39,7 @@ int init_OpenGL(void* window_ptr) {
         return 1;
 }
 
-void gx_clear(gx_ctx* ctx) {
+void gx_clear() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -48,6 +49,10 @@ void gx_present(gx_ctx* ctx) {
 }
 
 int gx_should_close(gx_ctx* ctx) {
+        glfwPollEvents();
+        if (glfwGetKey(ctx->window_ptr, GLFW_KEY_Q) == GLFW_PRESS) {
+                return 1;
+        }
         return glfwWindowShouldClose(ctx->window_ptr);
 }
 

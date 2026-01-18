@@ -1,5 +1,7 @@
 #include "gx.h"
 
+#include <stdio.h>
+
 // Endziele:
 // - 3d dreieck modelle mit textur oder einfarbig
 //      1. Basis objekte erstellen können: ABO, VBO, EBO ...
@@ -12,18 +14,9 @@
 
 unsigned int indices[]  = { 0, 1, 2 };
 float        vertices[] = {
-        -5.0f,
-        -5.0f,
-        0.0f,
-        /*... */  // 1.0f, 0.0f, 0.0f, /*... */
-        5.0f,
-        -5.0f,
-        0.0f,
-        /*... */  // 0.0f, 1.0f, 0.0f, /*... */
-        0.0f,
-        5.0f,
-        0.0f,
-        /*... */  // 0.0f, 0.0f, 1.0f /*... */ };
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, /*... */
+        0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, /*... */
+        0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f  /*... */
 };
 
 int main() {
@@ -36,11 +29,12 @@ int main() {
         gx_camera_set_rotation(gx_context, camera_rotation);
 
         gx_layout_attrib pos_color_attrs[] = {
-                { .type = GX_TYPE_FLOAT, 3, 0, 0 },
+                { .type = GX_TYPE_FLOAT, 3, 0, 0                 },
+                { .type = GX_TYPE_FLOAT, 3, 0, 3 * sizeof(float) }
         };
 
-        gx_layout l1 = gx_layout_create(gx_context, pos_color_attrs, 1,
-                                        3 * sizeof(float));
+        gx_layout l1 = gx_layout_create(gx_context, pos_color_attrs, 2,
+                                        6 * sizeof(float));
 
         gx_shader basic_shader = gx_shader_create(gx_context, "shaders/vs.glsl",
                                                   "shaders/fs.glsl");
@@ -57,9 +51,9 @@ int main() {
         //gx_mesh mesh1 = gx_mesh_create(gx_context, mesh_desc);
         gx_mesh mesh2 = gx_mesh_create(gx_context, mesh_desc);
 
-        gx_mesh_render(gx_context, mesh2, basic_shader);
-
         while (!gx_should_close(gx_context)) {
+                gx_clear();
+                gx_mesh_render(gx_context, mesh2, basic_shader);
                 gx_present(gx_context);
         }
 

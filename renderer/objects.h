@@ -36,7 +36,7 @@ struct GlobalRes {
 
 struct LayoutTemplate {
         gx_layout_attrib* attributes;
-        int               attrib_count;
+        u32               attrib_count;
         size_t            stride;
 };
 

@@ -20,7 +20,7 @@ void destroy_mesh_data_ubo(gx_ctx* ctx) {
 void sync_mesh_ubo_data(gx_ctx* ctx, struct mesh_ubo_data* ubo_data) {
         glBindBuffer(GL_UNIFORM_BUFFER, ctx->mesh_data_ubo);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(struct mesh_ubo_data),
-                        &ubo_data);
+                        ubo_data);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
@@ -28,6 +28,8 @@ gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
         struct MeshObj mesh = { 0 };
 
         mesh.index_count = mesh_desc.index_count;
+
+        assign_identity(mesh.ubo_data.transform);
 
         struct LayoutTemplate* layout =
                 array_at(&ctx->glob_resources.layouts, mesh_desc.layout);
@@ -69,9 +71,16 @@ gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
                 }
 
                 glEnableVertexArrayAttrib(mesh.VAO, i);
-                glVertexArrayAttribFormat(mesh.VAO, i, /* attribute location */
-                                          attr->count, gl_type,
-                                          attr->normalized, attr->offset);
+                if (gl_type == GL_FLOAT) {
+                        glVertexArrayAttribFormat(
+                                mesh.VAO, i, /* attribute location */
+                                attr->count, gl_type, attr->normalized,
+                                attr->offset);
+                } else {
+                        glVertexArrayAttribIFormat(
+                                mesh.VAO, i, /* attribute location */
+                                attr->count, gl_type, attr->offset);
+                }
 
                 glVertexArrayAttribBinding(mesh.VAO, i, /* attribute location */
                                            0            /* binding index */
@@ -84,7 +93,7 @@ gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
 }
 
 void gx_mesh_delete(gx_ctx* ctx, gx_mesh mesh) {
-        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
                 struct MeshObj* m = array_at(&ctx->glob_resources.mesh_objs, i);
                 if (m->gx_id != mesh) {
                         continue;
@@ -95,12 +104,13 @@ void gx_mesh_delete(gx_ctx* ctx, gx_mesh mesh) {
                 glDeleteVertexArrays(1, &m->VAO);
 
                 array_remove_at(&ctx->glob_resources.mesh_objs, i);
+                break;
         }
 }
 
 void gx_mesh_render(gx_ctx* ctx, gx_mesh mesh, gx_shader shader) {
         struct MeshObj* m = NULL;
-        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
                 struct MeshObj* temp =
                         array_at(&ctx->glob_resources.mesh_objs, i);
                 if (temp->gx_id == mesh) {
@@ -124,7 +134,7 @@ void gx_mesh_render(gx_ctx* ctx, gx_mesh mesh, gx_shader shader) {
 
 void gx_mesh_set_position(gx_ctx* ctx, gx_mesh mesh, float position[3]) {
         struct MeshObj* m = NULL;
-        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
                 struct MeshObj* temp =
                         array_at(&ctx->glob_resources.mesh_objs, i);
                 if (temp->gx_id == mesh) {
@@ -138,11 +148,11 @@ void gx_mesh_set_position(gx_ctx* ctx, gx_mesh mesh, float position[3]) {
         m->position[0] = position[0];
         m->position[1] = position[1];
         m->position[2] = position[2];
-};
+}
 
 void gx_mesh_set_rotation(gx_ctx* ctx, gx_mesh mesh, float quat_rotation[4]) {
         struct MeshObj* m = NULL;
-        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
                 struct MeshObj* temp =
                         array_at(&ctx->glob_resources.mesh_objs, i);
                 if (temp->gx_id == mesh) {

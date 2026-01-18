@@ -19,7 +19,7 @@ void init_camera_ubo(gx_ctx* ctx) {
 }
 
 void sync_camera_ubo(gx_ctx* ctx) {
-        for (int i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
                 struct GLCameraObject* cam_obj =
                         array_at(&ctx->glob_resources.gl_camera_objs, i);
 
@@ -36,12 +36,12 @@ void sync_camera_ubo(gx_ctx* ctx) {
 
 void update_camera_projection(gx_ctx* ctx) {
         float* proj_mat4 = NULL;
-        for (int i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
                 struct GLCameraObject* cam_obj =
                         array_at(&ctx->glob_resources.gl_camera_objs, i);
 
                 if (ctx->camera.gl_camera_object_id == cam_obj->gx_id) {
-                        proj_mat4 = cam_obj->ubo_data.view;
+                        proj_mat4 = cam_obj->ubo_data.proj;
                 }
         }
         if (proj_mat4) {
@@ -54,7 +54,7 @@ void update_camera_projection(gx_ctx* ctx) {
 
 void update_camera_view(gx_ctx* ctx) {
         float* view_mat4 = NULL;
-        for (int i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
                 struct GLCameraObject* cam_obj =
                         array_at(&ctx->glob_resources.gl_camera_objs, i);
 
@@ -83,7 +83,7 @@ void init_camera(gx_ctx* ctx) {
         ctx->camera.quat_rotation[0] = 0;
         ctx->camera.quat_rotation[1] = 0;
         ctx->camera.quat_rotation[2] = 0;
-        ctx->camera.quat_rotation[3] = 0;
+        ctx->camera.quat_rotation[3] = 1;
 
         update_camera_projection(ctx);
         update_camera_view(ctx);
@@ -100,5 +100,6 @@ void gx_camera_set_rotation(gx_ctx* ctx, float* quat_rotation) {
         ctx->camera.quat_rotation[0] = quat_rotation[0];
         ctx->camera.quat_rotation[1] = quat_rotation[1];
         ctx->camera.quat_rotation[2] = quat_rotation[2];
+        ctx->camera.quat_rotation[3] = quat_rotation[3];
         update_camera_view(ctx);
 }

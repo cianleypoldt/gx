@@ -1,5 +1,15 @@
 #include <math.h>
 
+void assign_identity(float* target_mat4) {
+        for (int i = 0; i < 16; i++) {
+                target_mat4[i] = 0.0f;
+        }
+        target_mat4[0]  = 1.0f;
+        target_mat4[5]  = 1.0f;
+        target_mat4[10] = 1.0f;
+        target_mat4[15] = 1.0f;
+}
+
 void compute_view(float* target_mat4,
                   float* vec3_position,
                   float* quat_rotation) {
@@ -65,7 +75,6 @@ void compute_projection(float* mat4_target,
 void compute_transform(float* target_mat4,
                        float* vec3_position,
                        float* quat_rotation) {
-        // Convert quaternion to rotation matrix
         float rx = quat_rotation[0];
         float ry = quat_rotation[1];
         float rz = quat_rotation[2];

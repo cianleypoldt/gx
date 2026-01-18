@@ -8,8 +8,7 @@
 
 gx_ctx* gx_ctx_init(int frame_width, int frame_height) {
         init_glfw();
-        void* window_ptr =
-                create_window(frame_width, frame_height, "gx_viewport");
+        void* window_ptr = create_window(frame_width, frame_height, "floating");
 
         init_OpenGL(window_ptr);
 
@@ -37,21 +36,21 @@ void gx_ctx_drop(gx_ctx* ctx) {
         if (ctx == NULL) {
                 return;
         }
-        for (int i = 0; i < ctx->glob_resources.layouts.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.layouts.count; i++) {
                 free(((struct LayoutTemplate*) array_at(
                               &ctx->glob_resources.layouts, i))
                              ->attributes);
         }
-        for (int i = 0; i < ctx->glob_resources.shader_programs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.shader_programs.count; i++) {
                 glDeleteProgram(*(unsigned int*) array_at(
                         &ctx->glob_resources.shader_programs, i));
         }
-        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
                 struct MeshObj* mesh_obj = (struct MeshObj*) array_at(
                         &ctx->glob_resources.mesh_objs, i);
                 gx_mesh_delete(ctx, mesh_obj->gx_id);
         }
-        for (int i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
+        for (size_t i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
                 glDeleteBuffers(
                         1, &(*(struct GLCameraObject*) array_at(
                                      &ctx->glob_resources.gl_camera_objs, i))

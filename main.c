@@ -15,14 +15,14 @@
 unsigned int indices[]  = { 0, 1, 2 };
 float        vertices[] = {
         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, /*... */
-        0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, /*... */
-        0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f  /*... */
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  /*... */
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    /*... */
 };
 
 int main() {
         gx_ctx* gx_context = gx_ctx_init(800, 600);
 
-        float camera_position[3] = { 0, 10, 0 };
+        float camera_position[3] = { 0, 0, 10 };
         gx_camera_set_position(gx_context, camera_position);
 
         float camera_rotation[4] = { 0, 0, 0, 1 };

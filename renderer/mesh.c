@@ -4,25 +4,7 @@
 #include "renderer/objects.h"
 #include "renderer/renderer.h"
 
-void init_mesh_data_ubo(gx_ctx* ctx) {
-        glGenBuffers(1, &ctx->mesh_data_ubo);
-        glBindBuffer(GL_UNIFORM_BUFFER, ctx->mesh_data_ubo);
-        glBufferData(GL_UNIFORM_BUFFER, sizeof(struct mesh_ubo_data), NULL,
-                     GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_UNIFORM_BUFFER, 1, ctx->mesh_data_ubo);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void destroy_mesh_data_ubo(gx_ctx* ctx) {
-        glDeleteBuffers(1, &ctx->mesh_data_ubo);
-}
-
-void sync_mesh_ubo_data(gx_ctx* ctx, struct mesh_ubo_data* ubo_data) {
-        glBindBuffer(GL_UNIFORM_BUFFER, ctx->mesh_data_ubo);
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(struct mesh_ubo_data),
-                        ubo_data);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
+#include <stdio.h>
 
 gx_mesh gx_mesh_create(gx_ctx* ctx, gx_mesh_desc mesh_desc) {
         struct MeshObj mesh = { 0 };
@@ -121,9 +103,30 @@ void gx_mesh_render(gx_ctx* ctx, gx_mesh mesh, gx_shader shader) {
         if (!m) {
                 return;
         }
-        compute_transform(m->ubo_data.transform, m->position, m->quat_rotation);
-        sync_mesh_ubo_data(ctx, &m->ubo_data);
+        // compute_transform(m->ubo_data.transform, m->position, m->quat_rotation);
 
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        u32 cam_id = ctx->camera.gl_camera_object_id;
+
+        struct GLCameraObject* cam_obj = NULL;
+        for (int i = 0; i < ctx->glob_resources.gl_camera_objs.count; i++) {
+                cam_obj = array_at(&ctx->glob_resources.gl_camera_objs, i);
+                if (cam_obj->gx_id == cam_id) {
+                        // for (int row = 0; row < 4; row++) {
+                        // for (int col = 0; col < 4; col++) {
+                        // printf(" ; %f", cam_obj->ubo_data.view[4 * col + row]);
+                        // }
+                        // printf("\n");
+                        // }
+                        // printf("\n");
+                        // break;
+                }
+        }
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+                printf("GL error: 0x%x\n", err);
+        }
         glUseProgram(*(unsigned int*) array_at(
                 &ctx->glob_resources.shader_programs, shader));
         glBindVertexArray(m->VAO);

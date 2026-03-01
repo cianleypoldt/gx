@@ -20,7 +20,7 @@ float        vertices[] = {
 };
 
 int main() {
-        gx_ctx* gx_context = gx_ctx_init(800, 600);
+        gx_ctx* gx_context = gx_ctx_init(800, 450);
 
         float camera_position[3] = { 0, 0, 10 };
         gx_camera_set_position(gx_context, camera_position);

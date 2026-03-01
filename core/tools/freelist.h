@@ -1,0 +1,25 @@
+#ifndef FREELIST_H
+#define FREELIST_H
+
+#include "core/tools/def.h"
+
+typedef char fl_occup_bool_t;
+
+typedef struct FreeList freelist_t;
+
+index_t fl_length(freelist_t *fl);
+index_t fl_capacity(freelist_t *fl);
+index_t fl_element_size(freelist_t *fl);
+
+fl_occup_bool_t *fl_occup_buffer(freelist_t *fl);
+
+freelist_t *fl_create(size_t element_size);
+void fl_delete(freelist_t *fl);
+int fl_is_occupied(const freelist_t *fl, index_t index);
+void *fl_at(const freelist_t *fl, index_t index);
+void *fl_at_occup(const freelist_t *fl, index_t index);
+index_t fl_add(freelist_t *fl, const void *data);
+void fl_reserve(freelist_t *fl, index_t capacity);
+void fl_remove_at(freelist_t *fl, index_t index);
+
+#endif

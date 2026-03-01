@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+# Collect all C files recursively
+C_FILES=$(find . -name "*.c" | sort)
+
 # Regenerate compile_commands.json for clangd if --bear flag is passed
 if [ "$1" = "--bear" ]; then
-    bear -- gcc -c main.c renderer/context.c renderer/shader.c renderer/layout.c renderer/mesh.c renderer/camera.c core/array.c core/mat4.c core/platform.c core/file.c external/glad.c -I. -Iexternal
+    bear -- gcc -c $C_FILES -I. -Iexternal
     echo "Generated compile_commands.json"
 fi
 
-gcc -Wall -Wextra main.c renderer/context.c renderer/shader.c renderer/layout.c renderer/mesh.c renderer/camera.c core/array.c core/mat4.c core/platform.c core/file.c external/glad.c -lglfw -lm -I. -Iexternal -o gx && ./gx
+gcc -Wall -Wextra $C_FILES -lglfw -lm -I. -Iexternal -o gx && ./gx

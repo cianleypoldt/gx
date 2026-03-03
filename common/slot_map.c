@@ -1,4 +1,4 @@
-#include "slotmap.h"
+#include "slot_map.h"
 #include "dynamic_array.h"
 #include "freelist.h"
 
@@ -14,9 +14,9 @@ struct SlotMap {
 	dynamic_array_t *data;
 };
 
-slotmap_t *sm_create(size_t element_size)
+slot_map_t *sm_create(size_t element_size)
 {
-	slotmap_t *sm = malloc(sizeof(struct SlotMap));
+	slot_map_t *sm = malloc(sizeof(struct SlotMap));
 
 	sm->index_map = fl_create(sizeof(index_t));
 	sm->generations = da_create(sizeof(gen_t));
@@ -26,7 +26,7 @@ slotmap_t *sm_create(size_t element_size)
 	return sm;
 }
 
-void sm_delete(slotmap_t *sm)
+void sm_delete(slot_map_t *sm)
 {
 	fl_delete(sm->index_map);
 	da_delete(sm->generations);
@@ -35,7 +35,7 @@ void sm_delete(slotmap_t *sm)
 	free(sm);
 }
 
-int sm_id_exists(const slotmap_t *sm, sm_id_t id)
+int sm_id_exists(const slot_map_t *sm, sm_id_t id)
 {
 	index_t *index = (index_t *)fl_at_occup(sm->index_map, id.map_index);
 	if (index && *(gen_t *)da_at(sm->generations, id.map_index) == id.gen) {
@@ -44,7 +44,7 @@ int sm_id_exists(const slotmap_t *sm, sm_id_t id)
 	return 0;
 }
 
-size_t sm_get_index(const slotmap_t *sm, sm_id_t id)
+size_t sm_get_index(const slot_map_t *sm, sm_id_t id)
 {
 	index_t *index = (index_t *)fl_at_occup(sm->index_map, id.map_index);
 	if (!index ||
@@ -57,7 +57,7 @@ size_t sm_get_index(const slotmap_t *sm, sm_id_t id)
 	return *index;
 }
 
-sm_id_t sm_get_id(slotmap_t *sm, index_t index)
+sm_id_t sm_get_id(slot_map_t *sm, index_t index)
 {
 	sm_id_t id;
 	id.map_index = *(index_t *)da_at(sm->dense_to_sparse, index);
@@ -65,29 +65,29 @@ sm_id_t sm_get_id(slotmap_t *sm, index_t index)
 	return id;
 }
 
-void *sm_at_id(const slotmap_t *sm, sm_id_t id)
+void *sm_at_id(const slot_map_t *sm, sm_id_t id)
 {
 	index_t index = sm_get_index(sm, id);
 	return da_at(sm->data, index);
 }
 
-void *sm_at_index(const slotmap_t *sm, index_t index)
+void *sm_at_index(const slot_map_t *sm, index_t index)
 {
 	return da_at(sm->data, index);
 }
 
-void sm_swap_elements(slotmap_t *sm, sm_id_t id_a, sm_id_t id_b)
+void sm_swap_elements(slot_map_t *sm, sm_id_t id_a, sm_id_t id_b)
 {
 	da_swap_elements(sm->data, sm_get_index(sm, id_a),
 			 sm_get_index(sm, id_b));
 }
 
-index_t sm_dense_length(const slotmap_t *sm)
+index_t sm_dense_length(const slot_map_t *sm)
 {
 	return da_length(sm->data);
 }
 
-sm_id_t sm_add(slotmap_t *sm, const void *data)
+sm_id_t sm_add(slot_map_t *sm, const void *data)
 {
 	da_append(sm->data, data);
 	index_t index = da_length(sm->data) - 1;
@@ -108,7 +108,7 @@ sm_id_t sm_add(slotmap_t *sm, const void *data)
 	return id;
 }
 
-void sm_remove_id(slotmap_t *sm, sm_id_t id)
+void sm_remove_id(slot_map_t *sm, sm_id_t id)
 {
 	index_t array_index = sm_get_index(sm, id);
 
@@ -125,4 +125,12 @@ void sm_remove_id(slotmap_t *sm, sm_id_t id)
 
 	da_remove_swap_at(sm->dense_to_sparse, array_index);
 	da_remove_swap_at(sm->data, array_index);
+}
+
+sm_id_t sm_invalid_id()
+{
+	sm_id_t id;
+	id.map_index = SM_INVALID_INDEX;
+	id.gen = SM_INVALID_GENERATION;
+	return id;
 }

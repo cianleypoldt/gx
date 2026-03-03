@@ -1,7 +1,7 @@
 #ifndef FREELIST_H
 #define FREELIST_H
 
-#include "core/tools/def.h"
+#include "def.h"
 
 typedef char fl_occup_bool_t;
 

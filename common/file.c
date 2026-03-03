@@ -1,7 +1,7 @@
-#include "core/utils.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "utils.h"
 
 file load_file(const char *path)
 {

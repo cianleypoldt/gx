@@ -1,7 +1,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "gx.h"
-#include "renderer/objects.h"
+
+#include "utils.h"
 
 #include <stdio.h>
 
@@ -48,12 +49,12 @@ void gx_clear()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void gx_present(gx_ctx *ctx)
+void gx_present(GLFWwindow *window_ptr)
 {
-	glfwSwapBuffers(ctx->window_ptr);
+	glfwSwapBuffers(window_ptr);
 }
 
-int gx_should_close(gx_ctx *ctx)
+int gx_should_close(GLFWwindow *window_ptr)
 {
 	glfwPollEvents();
 	if (glfwGetKey(ctx->window_ptr, GLFW_KEY_Q) == GLFW_PRESS) {

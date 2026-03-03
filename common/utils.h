@@ -3,9 +3,9 @@
 /* Internal utilities */
 #include <stddef.h>
 
-#include "tools/dynamic_array.h"
-#include "tools/freelist.h"
-#include "tools/slotmap.h"
+#include "dynamic_array.h"
+#include "freelist.h"
+#include "slot_map.h"
 
 typedef unsigned int u32;
 typedef double f64;

@@ -1,7 +1,7 @@
 #ifndef RENDER_OBJECTS_H
 #define RENDER_OBJECTS_H
-#include "core/tools/slotmap.h"
-#include "core/utils.h"
+#include "common/slot_map.h"
+#include "common/utils.h"
 #include "gx.h"
 
 #include <stddef.h>

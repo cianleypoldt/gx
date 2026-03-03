@@ -1,7 +1,7 @@
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
-#include "core/tools/def.h"
+#include "def.h"
 
 typedef struct DynamicArray dynamic_array_t;
 

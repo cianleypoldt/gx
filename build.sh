@@ -10,4 +10,4 @@ if [ "$1" = "--bear" ]; then
     echo "Generated compile_commands.json"
 fi
 
-gcc -Wall -Wextra $C_FILES -lglfw -lm -I. -Iexternal -o gx && ./gx
+gcc -Wall -Wextra $C_FILES -lglfw -lm -I. -Ithird_party -o gx && ./gx

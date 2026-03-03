@@ -7,6 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+struct id_internal {
+	index_t map_index;
+	gen_t gen;
+};
+
 struct SlotMap {
 	freelist_t *index_map;
 	dynamic_array_t *dense_to_sparse;

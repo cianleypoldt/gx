@@ -5,6 +5,7 @@
 #include <sys/types.h>
 
 typedef sm_id_t shader_id;
+typedef index_t uniform_id_t;
 typedef struct ShaderManager shadermgr_t;
 
 shadermgr_t *shadermgr_create();
@@ -15,6 +16,7 @@ shader_id shadermgr_create_program(shadermgr_t *mgr, char *vs_src,
 				   size_t fs_src_size);
 void shadermgr_destroy_program(shadermgr_t *mgr, shader_id id);
 
-void
+uniform_id_t shadermgr_get_uniform(shadermgr_t *mgr, shader_id id,
+				   const char *);
 
 #endif

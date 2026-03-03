@@ -112,6 +112,18 @@ void shadermgr_destroy_program(shadermgr_t *mgr, shader_id id)
 	sm_remove_id(mgr->shader_programs, id);
 }
 
+uniform_id_t shadermgr_get_uniform(shadermgr_t *mgr, shader_id id,
+				   const char *name)
+{
+	shader_program_t *prog = sm_at_id(mgr->shader_programs, id);
+	for (index_t i = 0; i < da_length(prog->uniforms); i++) {
+		uniform_t *u = da_at(prog->uniforms, i);
+		if (strcmp(u->name, name) == 0)
+			return i;
+	}
+	return SM_INVALID_INDEX;
+}
+
 int compile_with_logs(GLuint shader_id)
 {
 	glCompileShader(shader_id);

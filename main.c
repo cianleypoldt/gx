@@ -1,9 +1,7 @@
 #include <stdio.h>
-#include "render/UBO_mgr.h"
+#include "render/gx.h"
 int main()
 {
-	ubomgr_t *ubomgr = ubomgr_create();
-	ubomgr_destroy(ubomgr);
-
-	printf("loool");
+	gxctx *ctx = gx_init();
+	gx_deinit(ctx);
 }

@@ -23,7 +23,7 @@ typedef struct {
 	GLint location;
 } uniform_t;
 
-shadermgr_t *shadermgr_create()
+shadermgr_t *shadermgr_init()
 {
 	shadermgr_t *mgr = malloc(sizeof(shadermgr_t));
 	mgr->shader_programs = sm_create(sizeof(shader_program_t));
@@ -31,7 +31,7 @@ shadermgr_t *shadermgr_create()
 	return mgr;
 }
 
-void shadermgr_destroy(shadermgr_t *mgr)
+void shadermgr_deinit(shadermgr_t *mgr)
 {
 	for (index_t i = 0; i < sm_dense_length(mgr->shader_programs); i++) {
 		shader_program_t *program =
@@ -46,9 +46,9 @@ void shadermgr_destroy(shadermgr_t *mgr)
 static int compile_with_logs(GLuint shader_id);
 static int link_shader_with_logs(GLuint prog, GLuint vs, GLuint fs);
 
-shader_id shadermgr_create_program(shadermgr_t *mgr, char *vs_src,
-				   size_t vs_src_size, char *fs_src,
-				   size_t fs_src_size)
+shader_id shadermgr_add_program(shadermgr_t *mgr, char *vs_src,
+				size_t vs_src_size, char *fs_src,
+				size_t fs_src_size)
 {
 	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
 	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -86,25 +86,27 @@ shader_id shadermgr_create_program(shadermgr_t *mgr, char *vs_src,
 
 	GLint count;
 	glGetProgramiv(prog, GL_ACTIVE_UNIFORMS, &count);
-	da_resize(sp.uniforms, count);
+	da_reserve(sp.uniforms, count);
 
 	GLint size;
 	GLenum type;
 	GLsizei length;
 
 	for (GLint i = 0; i < count; i++) {
-		uniform_t *u = (uniform_t *)da_at(sp.uniforms, (index_t)i);
+		uniform_t u;
 
 		glGetActiveUniform(prog, (GLuint)i, UNIFORM_NAME_BUFFER_SIZE,
-				   &length, &size, &type, u->name);
-		u->type = type;
-		u->location = glGetUniformLocation(prog, u->name);
+				   &length, &size, &type, u.name);
+		u.type = type;
+		u.location = glGetUniformLocation(prog, u.name);
+		if (u.location >= 0)
+			da_append(sp.uniforms, &u);
 	}
 
 	return sm_add(mgr->shader_programs, &sp);
 }
 
-void shadermgr_destroy_program(shadermgr_t *mgr, shader_id id)
+void shadermgr_remove_program(shadermgr_t *mgr, shader_id id)
 {
 	shader_program_t *shader_program = sm_at_id(mgr->shader_programs, id);
 	glDeleteProgram(shader_program->id);
@@ -118,10 +120,23 @@ uniform_id_t shadermgr_get_uniform(shadermgr_t *mgr, shader_id id,
 	shader_program_t *prog = sm_at_id(mgr->shader_programs, id);
 	for (index_t i = 0; i < da_length(prog->uniforms); i++) {
 		uniform_t *u = da_at(prog->uniforms, i);
+		printf("%s, %s\n", u->name, name);
 		if (strcmp(u->name, name) == 0)
-			return i;
+			return (uniform_id_t)i;
 	}
-	return SM_INVALID_INDEX;
+	return SHADERMGR_INVALID_UNIFORM_ID;
+}
+
+void shadermgr_log_uniforms(shadermgr_t *mgr, shader_id id)
+{
+	printf("--- begin uniform log\n");
+	shader_program_t *prog = sm_at_id(mgr->shader_programs, id);
+	for (index_t i = 0; i < da_length(prog->uniforms); i++) {
+		uniform_t *u = da_at(prog->uniforms, i);
+		printf("        name: \"%s\"; location: %i; GL-type: %u\n",
+		       u->name, u->location, u->type);
+	}
+	printf("--- end\n");
 }
 
 static int compile_with_logs(GLuint shader_id)
@@ -136,7 +151,7 @@ static int compile_with_logs(GLuint shader_id)
 	int len;
 	glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
 	char *log = malloc(len + 1);
-	glGetShaderInfoLog(shader_id, len, NULL, log);
+	glGetShaderInfoLog(shader_id, len + 1, NULL, log);
 	log[len] = '\0';
 	printf("Shader failed to compile: \n");
 	printf("%s\n", log);

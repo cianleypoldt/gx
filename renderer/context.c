@@ -11,10 +11,10 @@
 
 gx_ctx *gx_ctx_init(int frame_width, int frame_height)
 {
-	init_glfw();
-	void *window_ptr = create_window(frame_width, frame_height, "floating");
+	glfw_init();
+	void *window_ptr = window_create(frame_width, frame_height, "floating");
 
-	init_OpenGL(window_ptr);
+	glad_init(window_ptr);
 
 	gx_ctx *ctx = malloc(sizeof(gx_ctx));
 	memset(ctx, 0, sizeof(gx_ctx));
@@ -66,7 +66,7 @@ void gx_ctx_drop(gx_ctx *ctx)
 		printf("OpenGL error: %u\n", err);
 	}
 
-	destroy_window(ctx->window_ptr);
+	window_destroy(ctx->window_ptr);
 	terminate_glfw();
 	array_delete(&ctx->glob_resources.layouts);
 	array_delete(&ctx->glob_resources.shader_programs);

@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "UBO_mgr.h"
+#include "UBO.h"
 
 typedef struct {
 	GLuint id;
@@ -16,7 +16,7 @@ struct UBO_Manager {
 	GLint max_bindings;
 };
 
-ubomgr_t *ubomgr_create()
+ubomgr_t *ubomgr_init()
 {
 	ubomgr_t *mgr = malloc(sizeof(ubomgr_t));
 	mgr->buffers = sm_create(sizeof(ubo_buffer_t));
@@ -27,7 +27,7 @@ ubomgr_t *ubomgr_create()
 	return mgr;
 }
 
-void ubomgr_destroy(ubomgr_t *mgr)
+void ubomgr_deinit(ubomgr_t *mgr)
 {
 	for (index_t i = 0; i < sm_dense_length(mgr->buffers); i++) {
 		ubo_buffer_t *ubo_buffer = sm_at_index(mgr->buffers, i);
@@ -38,7 +38,7 @@ void ubomgr_destroy(ubomgr_t *mgr)
 	free(mgr);
 }
 
-ubo_id ubomgr_create_ubo(ubomgr_t *mgr, size_t size)
+ubo_id ubomgr_add_ubo(ubomgr_t *mgr, size_t size)
 {
 	if (mgr->next_binding >= (GLuint)mgr->max_bindings) {
 		fprintf(stderr, "UBO binding points exhausted\n");

@@ -1,12 +1,11 @@
 #include "third_party/glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "gx.h"
 
 #include "utils.h"
 
 #include <stdio.h>
 
-int init_glfw()
+int glfw_init()
 {
 	if (!glfwInit()) {
 		fprintf(stderr, "Failed to initialize GLFW\n");
@@ -20,7 +19,7 @@ int init_glfw()
 	return 0;
 }
 
-void *create_window(int width, int height, const char *title)
+void *window_create(int width, int height, const char *title)
 {
 	GLFWwindow *window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (window == NULL) {
@@ -31,7 +30,7 @@ void *create_window(int width, int height, const char *title)
 	return window;
 }
 
-int init_OpenGL(void *window_ptr)
+int glad_init(void *window_ptr)
 {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		fprintf(stderr, "Failed to initialize GLAD\n");
@@ -43,8 +42,12 @@ int init_OpenGL(void *window_ptr)
 	return 1;
 }
 
-void gx_clear()
+void window_destroy(void *window_ptr)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glfwDestroyWindow(window_ptr);
+}
+
+void glfw_deinit()
+{
+	glfwTerminate();
 }

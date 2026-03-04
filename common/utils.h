@@ -12,11 +12,11 @@ typedef double f64;
 typedef float f32;
 
 // platform.c
-int init_glfw();
-void *create_window(int width, int height, const char *title);
-int init_OpenGL(void *window_ptr);
-void destroy_window(void *window_ptr);
-void terminate_glfw();
+int glfw_init();
+void glfw_deinit();
+void *window_create(int width, int height, const char *title);
+void window_destroy(void *window_ptr);
+int glad_init(void *window_ptr);
 
 // file.c
 typedef struct {

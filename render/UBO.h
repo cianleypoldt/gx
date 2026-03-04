@@ -7,11 +7,11 @@
 typedef sm_id_t ubo_id;
 typedef struct UBO_Manager ubomgr_t;
 
-ubomgr_t *ubomgr_create();
-void ubomgr_destroy(ubomgr_t *ubomgr);
+ubomgr_t *ubomgr_init();
+void ubomgr_deinit(ubomgr_t *ubomgr);
 
-ubo_id ubomgr_create_ubo(ubomgr_t *mgr, size_t size);
-void ubomgr_destroy_ubo(ubomgr_t *mgr, ubo_id id);
+ubo_id ubomgr_add_ubo(ubomgr_t *mgr, size_t size);
+void ubomgr_remove_ubo(ubomgr_t *mgr, ubo_id id);
 
 void ubomgr_update_ubo(ubomgr_t *mgr, ubo_id id, const void *data);
 void ubomgr_update_ubo_range(ubomgr_t *mgr, ubo_id id, const void *data,

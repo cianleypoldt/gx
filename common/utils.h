@@ -1,6 +1,6 @@
 #ifndef GX_UTILS_H
 #define GX_UTILS_H
-/* Internal utilities */
+
 #include <stddef.h>
 
 #include "dynamic_array.h"
@@ -27,8 +27,7 @@ typedef struct {
 file load_file(const char *path);
 void free_file(file f);
 
-//mat4.c
-
+// mat4.c
 void assign_identity(float *target_mat4);
 void compute_view(float *target_mat4, float *vec3_position,
 		  float *quat_rotation);

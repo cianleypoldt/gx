@@ -1,4 +1,4 @@
-#include "glad/glad.h"
+#include "third_party/glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "gx.h"
 
@@ -47,30 +47,4 @@ void gx_clear()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void gx_present(GLFWwindow *window_ptr)
-{
-	glfwSwapBuffers(window_ptr);
-}
-
-int gx_should_close(GLFWwindow *window_ptr)
-{
-	glfwPollEvents();
-	if (glfwGetKey(ctx->window_ptr, GLFW_KEY_Q) == GLFW_PRESS) {
-		return 1;
-	}
-	return glfwWindowShouldClose(ctx->window_ptr);
-}
-
-void destroy_window(void *window_ptr)
-{
-	if (window_ptr != NULL) {
-		glfwDestroyWindow(window_ptr);
-	}
-}
-
-void terminate_glfw()
-{
-	glfwTerminate();
 }

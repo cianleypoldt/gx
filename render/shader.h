@@ -1,5 +1,5 @@
-#ifndef UBO_MGR_H
-#define UBO_MGR_H
+#ifndef SHADER_H
+#define SHADER_H
 
 #include "common/slot_map.h"
 #include <sys/types.h>

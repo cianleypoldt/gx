@@ -1,6 +1,6 @@
 #include "common/dynamic_array.h"
 #include "common/slot_map.h"
-#include "third_party/glad/glad.h"
+#include "glad/glad.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,8 +43,8 @@ void shadermgr_destroy(shadermgr_t *mgr)
 	free(mgr);
 }
 
-int compile_with_logs(GLuint shader_id);
-int link_shader_with_logs(GLuint prog, GLuint vs, GLuint fs);
+static int compile_with_logs(GLuint shader_id);
+static int link_shader_with_logs(GLuint prog, GLuint vs, GLuint fs);
 
 shader_id shadermgr_create_program(shadermgr_t *mgr, char *vs_src,
 				   size_t vs_src_size, char *fs_src,
@@ -92,11 +92,11 @@ shader_id shadermgr_create_program(shadermgr_t *mgr, char *vs_src,
 	GLenum type;
 	GLsizei length;
 
-	for (GLuint i = 0; i < count; i++) {
+	for (GLint i = 0; i < count; i++) {
 		uniform_t *u = (uniform_t *)da_at(sp.uniforms, (index_t)i);
 
-		glGetActiveUniform(prog, i, UNIFORM_NAME_BUFFER_SIZE, &length,
-				   &size, &type, u->name);
+		glGetActiveUniform(prog, (GLuint)i, UNIFORM_NAME_BUFFER_SIZE,
+				   &length, &size, &type, u->name);
 		u->type = type;
 		u->location = glGetUniformLocation(prog, u->name);
 	}
@@ -124,7 +124,7 @@ uniform_id_t shadermgr_get_uniform(shadermgr_t *mgr, shader_id id,
 	return SM_INVALID_INDEX;
 }
 
-int compile_with_logs(GLuint shader_id)
+static int compile_with_logs(GLuint shader_id)
 {
 	glCompileShader(shader_id);
 
@@ -144,7 +144,7 @@ int compile_with_logs(GLuint shader_id)
 	return 0;
 }
 
-int link_shader_with_logs(GLuint prog, GLuint vs, GLuint fs)
+static int link_shader_with_logs(GLuint prog, GLuint vs, GLuint fs)
 {
 	glAttachShader(prog, vs);
 	glAttachShader(prog, fs);

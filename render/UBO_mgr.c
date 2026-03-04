@@ -1,5 +1,5 @@
 #include "common/slot_map.h"
-#include "third_party/glad/glad.h"
+#include "glad/glad.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "UBO_mgr.h"

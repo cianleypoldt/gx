@@ -7,7 +7,7 @@
 typedef sm_id_t ubo_id;
 typedef struct UBO_Manager ubomgr_t;
 
-ubomgr_t *shader_program_create(const void *);
+ubomgr_t *ubomgr_create();
 void ubomgr_destroy(ubomgr_t *ubomgr);
 
 ubo_id ubomgr_create_ubo(ubomgr_t *mgr, size_t size);

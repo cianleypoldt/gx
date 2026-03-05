@@ -1,5 +1,5 @@
 #include "common/def.h"
-#include "common/utils.h"
+#include "common/file.h"
 #include "render/mesh_buffer.h"
 #include <stdio.h>
 #include "gx.h"
@@ -48,4 +48,5 @@ int main()
 	gx_remove_mesh(ctx, mb);
 
 	gx_deinit(ctx);
+	printf("loool\n");
 }

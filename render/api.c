@@ -1,6 +1,6 @@
 #include "gx.h"
 #include "UBO.h"
-#include "common/utils.h"
+#include "common/platform.h"
 #include "render/mesh_buffer.h"
 #include "render/transform.h"
 #include "shader.h"
@@ -9,11 +9,14 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 struct GX_Context {
 	void *window;
+	size_t frame_dim[2];
+
 	ubomgr_t *ubomgr;
 	shadermgr_t *shadermgr;
 	mbmgr_t *mbmgr;
@@ -54,7 +57,10 @@ void gx_deinit(gxctx *ctx)
 	shadermgr_deinit(ctx->shadermgr);
 	ubomgr_deinit(ctx->ubomgr);
 	mbmgr_deinit(ctx->mbmgr);
-
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR) {
+		printf("OpenGL error: %u\n", err);
+	}
 	window_destroy(ctx->window);
 	glfw_deinit();
 	free(ctx);

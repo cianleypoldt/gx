@@ -1,8 +1,5 @@
-#include "core/utils.h"
 #include "glad/glad.h"
 #include "gx.h"
-#include "renderer/objects.h"
-#include "renderer/renderer.h"
 
 #include <stdio.h>
 
@@ -77,37 +74,9 @@ gx_mesh gx_mesh_create(gx_ctx *ctx, gx_mesh_desc mesh_desc)
 	return mesh.gx_id;
 }
 
-void gx_mesh_delete(gx_ctx *ctx, gx_mesh mesh)
-{
-	for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
-		struct MeshObj *m = array_at(&ctx->glob_resources.mesh_objs, i);
-		if (m->gx_id != mesh) {
-			continue;
-		}
-
-		glDeleteBuffers(1, &m->VBO);
-		glDeleteBuffers(1, &m->EBO);
-		glDeleteVertexArrays(1, &m->VAO);
-
-		array_remove_at(&ctx->glob_resources.mesh_objs, i);
-		break;
-	}
-}
-
 void gx_mesh_render(gx_ctx *ctx, gx_mesh mesh, gx_shader shader)
 {
 	struct MeshObj *m = NULL;
-	for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
-		struct MeshObj *temp =
-			array_at(&ctx->glob_resources.mesh_objs, i);
-		if (temp->gx_id == mesh) {
-			m = temp;
-			break;
-		}
-	}
-	if (!m) {
-		return;
-	}
 	// compute_transform(m->ubo_data.transform, m->position, m->quat_rotation);
 
 	glDisable(GL_DEPTH_TEST);
@@ -138,43 +107,4 @@ void gx_mesh_render(gx_ctx *ctx, gx_mesh mesh, gx_shader shader)
 
 	glDrawElements(GL_TRIANGLES, m->index_count, GL_UNSIGNED_INT,
 		       (const void *)0);
-}
-
-void gx_mesh_set_position(gx_ctx *ctx, gx_mesh mesh, float position[3])
-{
-	struct MeshObj *m = NULL;
-	for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
-		struct MeshObj *temp =
-			array_at(&ctx->glob_resources.mesh_objs, i);
-		if (temp->gx_id == mesh) {
-			m = temp;
-			break;
-		}
-	}
-	if (!m) {
-		return;
-	}
-	m->position[0] = position[0];
-	m->position[1] = position[1];
-	m->position[2] = position[2];
-}
-
-void gx_mesh_set_rotation(gx_ctx *ctx, gx_mesh mesh, float quat_rotation[4])
-{
-	struct MeshObj *m = NULL;
-	for (size_t i = 0; i < ctx->glob_resources.mesh_objs.count; i++) {
-		struct MeshObj *temp =
-			array_at(&ctx->glob_resources.mesh_objs, i);
-		if (temp->gx_id == mesh) {
-			m = temp;
-			break;
-		}
-	}
-	if (!m) {
-		return;
-	}
-	m->quat_rotation[0] = quat_rotation[0];
-	m->quat_rotation[1] = quat_rotation[1];
-	m->quat_rotation[2] = quat_rotation[2];
-	m->quat_rotation[3] = quat_rotation[3];
 }

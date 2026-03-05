@@ -1,7 +1,7 @@
 #include "third_party/glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "utils.h"
+#include "platform.h"
 
 #include <stdio.h>
 

@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "common/slot_map.h"
+#include "common/slot_map_id.h"
 #include <sys/types.h>
 
 typedef sm_id_t shader_id;

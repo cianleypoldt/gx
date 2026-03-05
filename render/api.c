@@ -2,12 +2,15 @@
 #include "UBO.h"
 #include "common/utils.h"
 #include "render/mesh_buffer.h"
+#include "render/transform.h"
 #include "shader.h"
 #include "camera.h"
 #include "material.h"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct GX_Context {
 	void *window;
@@ -37,6 +40,11 @@ gxctx *gx_init(void)
 
 	ctx->shadermgr = shadermgr_init();
 	ctx->mbmgr = mbmgr_init();
+
+	memset(&ctx->camera, 0, sizeof(struct Camera));
+
+	ctx->camera.proj_dirty = 1;
+	ctx->camera.view_dirty = 1;
 
 	return ctx;
 }
@@ -88,4 +96,14 @@ void gx_remove_shader(gxctx *ctx, gx_shader shader)
 void gx_shader_print_uniforms(gxctx *ctx, gx_shader shader)
 {
 	shadermgr_log_uniforms(ctx->shadermgr, shader);
+}
+
+void gx_set_camera_transform(gxctx *ctx, gx_transform_t *transform)
+{
+	if (memcmp(transform, &ctx->camera.transform,
+		   sizeof(struct Transform)) != 0) {
+		memcpy(&ctx->camera.transform, transform,
+		       sizeof(struct Transform));
+		ctx->camera.view_dirty = 1;
+	}
 }

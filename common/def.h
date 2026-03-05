@@ -7,5 +7,6 @@
 #define ARRAY_RESIZE_FACTOR 2
 
 typedef size_t index_t;
+typedef size_t gen_t;
 
 #endif

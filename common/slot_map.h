@@ -2,18 +2,10 @@
 #define SLOTMAP_H
 
 #include "def.h"
-
-typedef size_t gen_t;
+#include "slot_map_id.h"
 
 #define SM_INVALID_INDEX (index_t)(-1)
 #define SM_INVALID_GENERATION (gen_t)(-1)
-
-typedef struct sm_id_t sm_id_t;
-
-struct sm_id_t {
-	index_t map_index;
-	gen_t gen;
-};
 
 typedef struct SlotMap slot_map_t;
 

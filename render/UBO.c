@@ -1,8 +1,10 @@
-#include "common/slot_map.h"
+#include "common/def.h"
 #include "glad/glad.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "UBO.h"
+
+#define GX_MAX_UNIFORM_BUFFERS 114
 
 typedef struct {
 	GLuint id;
@@ -11,75 +13,79 @@ typedef struct {
 } ubo_buffer_t;
 
 struct UBO_Manager {
-	slot_map_t *buffers;
-	uint next_binding;
+	ubo_buffer_t ubo_buffers[GX_MAX_UNIFORM_BUFFERS];
+	index_t buffer_count;
 	GLint max_bindings;
+	GLint max_block_size;
 };
 
 ubomgr_t *ubomgr_init()
 {
+	GL_MAX_UNIFORM_BUFFER_BINDINGS;
 	ubomgr_t *mgr = malloc(sizeof(ubomgr_t));
-	mgr->buffers = sm_create(sizeof(ubo_buffer_t));
-	mgr->next_binding = 0;
+	mgr->buffer_count = 0;
 
 	glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &mgr->max_bindings);
+	glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &mgr->max_block_size);
 
 	return mgr;
 }
 
 void ubomgr_deinit(ubomgr_t *mgr)
 {
-	for (index_t i = 0; i < sm_dense_length(mgr->buffers); i++) {
-		ubo_buffer_t *ubo_buffer = sm_at_index(mgr->buffers, i);
-		glDeleteBuffers(1, &ubo_buffer->id);
+	for (index_t i = 0; i < mgr->buffer_count; i++) {
+		glDeleteBuffers(1, &mgr->ubo_buffers[i].id);
 	}
-
-	sm_delete(mgr->buffers);
 	free(mgr);
 }
 
-ubo_id ubomgr_add_ubo(ubomgr_t *mgr, size_t size)
+ubo_binding ubomgr_add_ubo(ubomgr_t *mgr, size_t size)
 {
-	if (mgr->next_binding >= (GLuint)mgr->max_bindings) {
+	if (mgr->buffer_count >= (GLuint)mgr->max_bindings ||
+	    mgr->buffer_count >= GX_MAX_UNIFORM_BUFFERS) {
 		fprintf(stderr, "UBO binding points exhausted\n");
 		abort();
 	}
+	if (size > (size_t)mgr->max_block_size) {
+		fprintf(stderr, "Max UBO size exceeded.\n");
+		abort();
+	}
+	index_t binding = mgr->buffer_count;
 
-	ubo_buffer_t buffer;
-	buffer.size = size;
-	glGenBuffers(1, &buffer.id);
-	if (buffer.id == 0) {
+	ubo_buffer_t *buffer = &mgr->ubo_buffers[binding];
+	glGenBuffers(1, &buffer->id);
+	if (buffer->id == 0) {
 		fprintf(stderr, "Failed to generate UBO\n");
 		abort();
 	}
-	buffer.binding = mgr->next_binding++;
+	mgr->buffer_count++;
+	buffer->size = size;
+	buffer->binding = binding;
 
-	glBindBuffer(GL_UNIFORM_BUFFER, buffer.id);
+	glBindBuffer(GL_UNIFORM_BUFFER, buffer->id);
 
-	glBufferData(GL_UNIFORM_BUFFER, buffer.size, NULL, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, buffer.binding, buffer.id);
+	glBufferData(GL_UNIFORM_BUFFER, buffer->size, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, buffer->binding, buffer->id);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	return sm_add(mgr->buffers, &buffer);
+	return binding;
 }
 
-void ubomgr_update_ubo(ubomgr_t *mgr, ubo_id id, const void *data)
+void ubomgr_update_ubo(ubomgr_t *mgr, ubo_binding index, const void *data)
 {
-	ubo_buffer_t *ubo_buffer = sm_at_id(mgr->buffers, id);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo_buffer->id);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, ubo_buffer->size, data);
+	glBindBuffer(GL_UNIFORM_BUFFER, mgr->ubo_buffers[index].id);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, mgr->ubo_buffers[index].size,
+			data);
 }
 
-void ubomgr_update_ubo_range(ubomgr_t *mgr, ubo_id id, const void *data,
+void ubomgr_update_ubo_range(ubomgr_t *mgr, ubo_binding index, const void *data,
 			     size_t offset, size_t size)
 {
-	ubo_buffer_t *ubo_buffer = sm_at_id(mgr->buffers, id);
-	if (offset + size > ubo_buffer->size) {
+	if (offset + size > mgr->ubo_buffers[index].size) {
 		fprintf(stderr, "UBO range update out of bounds\n");
 		abort();
 	}
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo_buffer->id);
+	glBindBuffer(GL_UNIFORM_BUFFER, mgr->ubo_buffers[index].id);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 }

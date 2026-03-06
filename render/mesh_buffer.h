@@ -2,7 +2,7 @@
 #define MESH_BUFFER_MGR_H
 
 #include "common/slot_map_id.h"
-#include "render/layout_attrib.h"
+#include "render/public.h"
 #include <sys/types.h>
 
 #define GX_MAX_LAYOUT_ATTRIBUTES 64

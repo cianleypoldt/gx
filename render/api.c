@@ -1,11 +1,11 @@
 #include "gx.h"
-#include "UBO.h"
 #include "common/platform.h"
+#include "render/ubiform_buffers.h"
+#include "render/UBO.h"
 #include "render/mesh_buffer.h"
-#include "render/transform.h"
-#include "shader.h"
-#include "camera.h"
-#include "material.h"
+#include "render/camera.h"
+#include "render/shader.h"
+#include "render/material.h"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <stddef.h>
@@ -20,8 +20,8 @@ struct GX_Context {
 	ubomgr_t *ubomgr;
 	shadermgr_t *shadermgr;
 	mbmgr_t *mbmgr;
+	matmgr_t *matmgr;
 
-	ubo_binding camera_ubo;
 	ubo_binding material_ubo;
 
 	struct Camera camera;
@@ -36,18 +36,18 @@ gxctx *gx_init(void)
 	glad_init(ctx->window);
 
 	ctx->ubomgr = ubomgr_init();
-	ctx->camera_ubo =
-		ubomgr_add_ubo(ctx->ubomgr, sizeof(struct camera_ubo_data));
-	ctx->material_ubo =
-		ubomgr_add_ubo(ctx->ubomgr, sizeof(struct material_ubo_data));
-
 	ctx->shadermgr = shadermgr_init();
 	ctx->mbmgr = mbmgr_init();
 
 	memset(&ctx->camera, 0, sizeof(struct Camera));
-
+	ctx->camera.ubo_id =
+		ubomgr_add_ubo(ctx->ubomgr, sizeof(struct CameraUBOData), 0);
 	ctx->camera.proj_dirty = 1;
 	ctx->camera.view_dirty = 1;
+
+	ubo_binding material_ubo =
+		ubomgr_add_ubo(ctx->ubomgr, sizeof(struct MaterialUBOData), 1);
+	ctx->matmgr = matmgr_init(material_ubo);
 
 	return ctx;
 }
@@ -57,6 +57,7 @@ void gx_deinit(gxctx *ctx)
 	shadermgr_deinit(ctx->shadermgr);
 	ubomgr_deinit(ctx->ubomgr);
 	mbmgr_deinit(ctx->mbmgr);
+	matmgr_deinit(ctx->matmgr);
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR) {
 		printf("OpenGL error: %u\n", err);
@@ -106,10 +107,16 @@ void gx_shader_print_uniforms(gxctx *ctx, gx_shader shader)
 
 void gx_set_camera_transform(gxctx *ctx, gx_transform_t *transform)
 {
-	if (memcmp(transform, &ctx->camera.transform,
-		   sizeof(struct Transform)) != 0) {
-		memcpy(&ctx->camera.transform, transform,
-		       sizeof(struct Transform));
-		ctx->camera.view_dirty = 1;
-	}
+	camera_set_transform(&ctx->camera, transform);
+}
+
+void gx_set_camera_params(gxctx *ctx, gx_camera_params *params)
+{
+	camera_set_params(&ctx->camera, params);
+}
+
+gx_material gx_add_material(gxctx *ctx, gx_material_desc *desc,
+			    gx_shader shader)
+{
+	return (gx_material)matmgr_add_material(ctx->matmgr, desc, shader);
 }

@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include "mesh_buffer.h"
 #include "common/slot_map.h"
-#include "render/layout_attrib.h"
+#include "render/public.h"
 #include <stdlib.h>
 #include <string.h>
 

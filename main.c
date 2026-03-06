@@ -22,8 +22,10 @@ int main()
 
 	free_file(vs);
 	free_file(fs);
-
 	// gx_shader_print_uniforms(ctx, default_program);
+
+	gx_material_desc metal = { .metallic = 0.2, .roughness = 0.2 };
+	gx_material mat_metal = gx_add_material(ctx, &metal, default_program);
 
 	gx_layout_attribute attribs[3] = {
 		{ .type = GX_FLOAT_ATTRIB, .count = 3, .normalized = 0 },
